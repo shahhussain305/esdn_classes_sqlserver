@@ -23,4 +23,18 @@ class DBU {
                                 'host'=>'MTcyLjE2LjAuMTQ3',//172.16.0.147
                                 'db'=>'RGlzdHJpY3RDYXNlTWFuYWdlbWVudA=='//DistrictCaseManagement
                                 );
+                                
+        /*static $view_user = array(
+                                    'user'=>'sa', //SA
+                                    'key'=>'Swat@1234!',//Swat@1234!
+                                    'host'=>'172.16.0.147',//172.16.0.147
+                                    'db'=>'DistrictCaseManagement'//DistrictCaseManagement
+                                    );
+        static $dba_user = array(
+                                    'user'=>'sa', //SA
+                                    'key'=>'Swat@1234!',//Swat@1234!
+                                    'host'=>'172.16.0.147',//172.16.0.147
+                                    'db'=>'DistrictCaseManagement'//DistrictCaseManagement
+                                    );
+                                    */
     }//

@@ -31,7 +31,7 @@ class CRUD{
 		$this->db_name = $db;
 		$this->host = $host;
 		}
-			
+				
 	function __destruct(){
 		try{
 			$this->con = null;
@@ -43,12 +43,16 @@ class CRUD{
          * connect() function to connect to database
          */
 	protected function connect(){
-		try{
-			$this->con = new PDO("mysql:host={$this->host};dbname={$this->db_name};charset=utf8", $this->db_user, $this->db_pass); 
-                        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			//$this->con->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-           	}catch(PDOException $ex){
-			return $ex->getMessage();
+		//try{
+			try{
+				$this->con = new PDO("sqlsrv:server=$this->host; database = $this->db_name", $this->db_user, $this->db_pass);
+				$this->con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+				if(!$this->con){
+					die('Connection error!');
+				}
+			}
+			catch(PDOException $e){
+				exit("Error: " . $e->getMessage());
 			}
 		}
     /**	___________________________________________________________________________________________
@@ -93,18 +97,17 @@ class CRUD{
                          *      echo($method->errorMsg("","Sorry there was no record found"));
                          * }
                          */
-                        public function getRecordSetFilled($sql,$bindVars=array()){
+                public function getRecordSetFilled($sql,$bindVars=array()){
 				try{
 					$this->connect();
 					$statement = $this->con->prepare($sql);
-					$statement->execute($bindVars);
-                                        $is_there_any_row = $statement->rowCount();//if greater than 0, it will return result set
-                                        if(isset($is_there_any_row) && $is_there_any_row > 0){
-                                            return $statement->fetchAll();
-                                        }
-                                        else{
-                                            return array();//means no record was found
-                                        }
+					$result = $statement->execute($bindVars);
+					if(isset($result) && $result > 0){
+                        return $statement->fetchAll();
+                    }
+                    else{
+                        return array();//means no record was found
+                    }
 					$this->con = null;
 				}catch(PDOException $ex){
 					return $ex->getMessage(); //Developer Machine: Display Exceptions in browser
@@ -168,8 +171,8 @@ class CRUD{
 			try{
 				$this->connect();
 				$statement = $this->con->prepare($sql);
-				$statement->execute($bindVars);
-				if($statement->rowCount() > 0){
+				$result = $statement->execute($bindVars);
+				if($result > 0){
 					return true;
 					}
 				else{
@@ -213,8 +216,8 @@ class CRUD{
 			    $this->connect();
 			    $options = "";
 				$statement = $this->con->prepare($sql);
-				$statement->execute($bindVars);				
-				 if($statement->rowCount() > 0){
+				$result = $statement->execute($bindVars);				
+				 if($result > 0){
 					if($showEmptyFld == 1){
 						$options .= '<option value=""></option>';
 						}
@@ -320,7 +323,7 @@ class CRUD{
 					foreach($sqlsArray as $sql=>$ary){//loop over sql Array to get individval sql
 						$stmt = $this->con->prepare($sql);
 						$stmt->execute($ary);
-                                                //$this->tempVar .= 'Sql = '.$sql.' param = '.$ary.'<hr>';
+                    	//$this->tempVar .= 'Sql = '.$sql.' param = '.$ary.'<hr>';
 					}					
 					$this->con->commit();
 					$flag = true;
@@ -514,4 +517,3 @@ class CRUD{
 	
 		 	
 	}
-?>
